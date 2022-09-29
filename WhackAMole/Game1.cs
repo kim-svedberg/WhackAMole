@@ -9,6 +9,12 @@ namespace WhackAMole
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
+        Mole mole; 
+
+        Texture2D moleTex;
+        Texture2D grassTex;
+        Texture2D holeTex;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -25,6 +31,9 @@ namespace WhackAMole
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            moleTex = Content.Load<Texture2D>("mole");
+            grassTex = Content.Load<Texture2D>("grass");
+            holeTex = Content.Load<Texture2D>("molehole");
 
         }
 
@@ -41,6 +50,7 @@ namespace WhackAMole
         {
             spriteBatch.Begin();
             GraphicsDevice.Clear(Color.LawnGreen);
+            //mole.Draw(spriteBatch);
             spriteBatch.End(); 
 
             base.Draw(gameTime);
