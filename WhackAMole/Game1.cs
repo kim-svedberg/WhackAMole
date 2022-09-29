@@ -39,8 +39,9 @@ namespace WhackAMole
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            spriteBatch.Begin();
+            GraphicsDevice.Clear(Color.LawnGreen);
+            spriteBatch.End(); 
 
             base.Draw(gameTime);
         }
