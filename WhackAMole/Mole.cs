@@ -10,28 +10,59 @@ namespace WhackAMole
         Texture2D moleTex;
         Texture2D holeTex;
         Texture2D grassTex;
+        Vector2 pos;
         Vector2 startPos;
-        Vector2 pos; 
 
-        public Mole(Texture2D moleTex, Texture2D holeTex, Texture2D grassTex, Vector2 startPos, Vector2 pos)
+        public Mole(Texture2D moleTex, Texture2D holeTex, Texture2D grassTex, int posX, int posY)
         {
             this.moleTex = moleTex;
             this.holeTex = holeTex;
             this.grassTex = grassTex;
-            this.startPos = startPos;
-            this.pos = pos;
+            pos = new Vector2(posX, posY);
+            startPos = new Vector2(posX, posY);
+
         }
 
         public void Update()
         {
-            
+            while(true)
+            {
+                 
+            }
+
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(moleTex, pos, Color.White);
-            spriteBatch.Draw(holeTex, startPos, Color.White);
-            spriteBatch.Draw(grassTex, startPos, Color.White);
+            spriteBatch.Draw(moleTex, 
+                pos, 
+                null, 
+                Color.White, 
+                0, 
+                Vector2.Zero, 
+                1.0f, 
+                SpriteEffects.None,
+                0.5f);
+
+            spriteBatch.Draw(holeTex, 
+                startPos, 
+                null, 
+                Color.White, 
+                0, 
+                Vector2.Zero, 
+                1.0f, 
+                SpriteEffects.None, 
+                1f);
+
+            spriteBatch.Draw(grassTex, 
+                startPos, 
+                null, 
+                Color.White, 
+                0, 
+                Vector2.Zero, 
+                1.0f, 
+                SpriteEffects.None, 
+                0f);
         }
     }
 }
