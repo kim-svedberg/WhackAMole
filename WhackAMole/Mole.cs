@@ -10,32 +10,51 @@ namespace WhackAMole
         Texture2D moleTex;
         Texture2D holeTex;
         Texture2D grassTex;
-        Vector2 pos;
-        Vector2 startPos;
 
-        public Mole(Texture2D moleTex, Texture2D holeTex, Texture2D grassTex, int posX, int posY)
+        Vector2 molePos;
+        Vector2 holePos;
+        Vector2 grassPos;
+        Vector2 moleVelo;
+
+        int widthSpace;
+        int heightSpace;
+
+
+        public Mole(Texture2D moleTex, Texture2D holeTex, Texture2D grassTex, int widthSpace, int heightSpace)
         {
             this.moleTex = moleTex;
             this.holeTex = holeTex;
             this.grassTex = grassTex;
-            pos = new Vector2(posX, posY);
-            startPos = new Vector2(posX, posY);
+            this.widthSpace = widthSpace;
+            this.heightSpace = heightSpace;
 
+
+        }
+
+        public void Load()
+        {
+            holePos = new Vector2(150 + widthSpace, 300+heightSpace);
+            molePos = new Vector2(150 + widthSpace, 125 + heightSpace);
+            grassPos = new Vector2(150 + widthSpace, 300 + heightSpace);
+            moleVelo = new Vector2(0, 2);
         }
 
         public void Update()
         {
-            while(true)
+            molePos = molePos + moleVelo;
+
+            if(molePos.Y < grassPos.Y-175 || molePos.Y > grassPos.Y)
             {
-                 
+                moleVelo.Y *= -1;
             }
+
 
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(moleTex, 
-                pos, 
+                molePos, 
                 null, 
                 Color.White, 
                 0, 
@@ -44,24 +63,24 @@ namespace WhackAMole
                 SpriteEffects.None,
                 0.5f);
 
-            spriteBatch.Draw(holeTex, 
-                startPos, 
-                null, 
-                Color.White, 
-                0, 
-                Vector2.Zero, 
-                1.0f, 
-                SpriteEffects.None, 
+            spriteBatch.Draw(holeTex,
+                holePos,
+                null,
+                Color.White,
+                0,
+                Vector2.Zero,
+                1.0f,
+                SpriteEffects.None,
                 1f);
 
-            spriteBatch.Draw(grassTex, 
-                startPos, 
-                null, 
-                Color.White, 
-                0, 
-                Vector2.Zero, 
-                1.0f, 
-                SpriteEffects.None, 
+            spriteBatch.Draw(grassTex,
+                grassPos,
+                null,
+                Color.White,
+                0,
+                Vector2.Zero,
+                1.0f,
+                SpriteEffects.None,
                 0f);
         }
     }
