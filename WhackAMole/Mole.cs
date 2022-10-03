@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using System;
 
 namespace WhackAMole
@@ -53,6 +54,17 @@ namespace WhackAMole
             switch (moleState)
             {
                 case MoleState.MovingUp:
+                case MoleState.IsUp:
+                    if(klick)
+                    {
+                        moleState = MoleState.IsHit;
+                    }
+                    break;
+            }
+
+            switch (moleState)
+            {
+                case MoleState.MovingUp:
                     molePos -= moleVelo;
                     if (molePos.Y < grassPos.Y - 175)
                     {
@@ -88,6 +100,9 @@ namespace WhackAMole
                     break;
             }
 
+
+            int height = ((int)molePos.Y - (int)grassPos.Y);
+            moleHitBox = new Rectangle((int)molePos.X, (int)molePos.Y - height + 35, moleTex.Width, height);
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -121,6 +136,8 @@ namespace WhackAMole
                 1.0f,
                 SpriteEffects.None,
                 0f);
+
+            spriteBatch.DrawRectangle(moleHitBox, Color.Red, 2f, 0);
         }
     }
 }
