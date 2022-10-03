@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace WhackAMole
@@ -19,6 +18,15 @@ namespace WhackAMole
         int widthSpace;
         int heightSpace;
 
+        Rectangle moleHitBox;
+
+        enum MoleState
+        {
+            MovingUp, IsUp, MovingDown, IsDown, IsHit //IsDownHit
+        }
+
+        MoleState moleState;
+
 
         public Mole(Texture2D moleTex, Texture2D holeTex, Texture2D grassTex, int widthSpace, int heightSpace)
         {
@@ -33,33 +41,64 @@ namespace WhackAMole
 
         public void Load()
         {
-            holePos = new Vector2(150 + widthSpace, 300+heightSpace);
-            molePos = new Vector2(150 + widthSpace, 125 + heightSpace);
+            holePos = new Vector2(150 + widthSpace, 300 + heightSpace);
             grassPos = new Vector2(150 + widthSpace, 300 + heightSpace);
-            moleVelo = new Vector2(0, 2);
+            molePos = new Vector2(150 + widthSpace, grassPos.Y);
+            moleVelo = new Vector2(0, 2.5f);
+            moleState = MoleState.IsDown;
         }
 
-        public void Update()
+        public void Update(Random rnd)
         {
-            molePos = molePos + moleVelo;
-
-            if(molePos.Y < grassPos.Y-175 || molePos.Y > grassPos.Y)
+            switch (moleState)
             {
-                moleVelo.Y *= -1;
-            }
+                case MoleState.MovingUp:
+                    molePos -= moleVelo;
+                    if (molePos.Y < grassPos.Y - 175)
+                    {
+                        moleState = MoleState.IsUp;
+                        molePos.Y = grassPos.Y - 175;
+                    }
+                    break;
 
+                case MoleState.IsUp:
+                    if (rnd.Next(1, 100) == 1)
+                    {
+                        moleState = MoleState.MovingDown;
+                    }
+                    break;
+
+                case MoleState.MovingDown:
+                    molePos += moleVelo;
+                    if (molePos.Y > grassPos.Y)
+                    {
+                        moleState = MoleState.IsDown;
+                        molePos.Y = grassPos.Y;
+                    }
+                    break;
+
+                case MoleState.IsDown:
+                    if (rnd.Next(1, 100) == 1)
+                    {
+                        moleState = MoleState.MovingUp;
+                    }
+                    break;
+
+                case MoleState.IsHit: //När mole blir klickad ska det direkt bli IsHit. Inuti IsHit byts bilden till bonked & går ner. 
+                    break;
+            }
 
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(moleTex, 
-                molePos, 
-                null, 
-                Color.White, 
-                0, 
-                Vector2.Zero, 
-                1.0f, 
+            spriteBatch.Draw(moleTex,
+                molePos,
+                null,
+                Color.White,
+                0,
+                Vector2.Zero,
+                1.0f,
                 SpriteEffects.None,
                 0.5f);
 

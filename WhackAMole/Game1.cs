@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.Direct3D9;
 using System;
+using System.Threading;
+
 
 namespace WhackAMole
 {
@@ -22,14 +24,17 @@ namespace WhackAMole
         int widthSpace;
         int heightSpace;
 
+
+        Random rnd = new Random();
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            graphics.PreferredBackBufferWidth = 1000;   //Ändrar storlek på fönstret
-            graphics.PreferredBackBufferHeight = 1000;
+            graphics.PreferredBackBufferWidth = 1250;   //Ändrar storlek på fönstret
+            graphics.PreferredBackBufferHeight = 1250;
             graphics.ApplyChanges();
         }
 
@@ -59,12 +64,15 @@ namespace WhackAMole
                     heightSpace = i * (moleTex.Height + 100);
                     mole = new Mole(moleTex, holeTex, grassTex, widthSpace, heightSpace);
                     mole.Load();
+                    
                     mole2DArray[i, j] = mole;
 
                 }
 
 
             }
+
+            
 
 
 
@@ -80,7 +88,9 @@ namespace WhackAMole
             {
                 for (int j = 0; j < mole2DArray.GetLength(1); j++)
                 {
-                    mole2DArray[i, j].Update();
+                    // rnd.Next()
+
+                    mole2DArray[i, j].Update(rnd);
 
                 }
 
@@ -92,11 +102,15 @@ namespace WhackAMole
 
         protected override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin(SpriteSortMode.BackToFront,null);
-            GraphicsDevice.Clear(Color.LawnGreen);
-            //spriteBatch.Draw(bgTex, new Vector2(0, 0), null, Color.White, 0, new Vector2(0,0), 1, SpriteEffects.None, 0.05f);
             
-                for (int i = 0; i < mole2DArray.GetLength(0); i++)
+            spriteBatch.Begin(SpriteSortMode.BackToFront,null);
+            spriteBatch.Draw(bgTex, new Vector2(0, 0), null, Color.White, 0, new Vector2(0, 0), 2, SpriteEffects.None, 1f);
+       
+            Color grassGreen = new Color(111, 209, 72, 255);
+                   GraphicsDevice.Clear(grassGreen);
+
+
+            for (int i = 0; i < mole2DArray.GetLength(0); i++)
                     for (int j = 0; j < mole2DArray.GetLength(1); j++)
                     {
                         mole2DArray[i, j].Draw(spriteBatch);
