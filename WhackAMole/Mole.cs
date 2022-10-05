@@ -40,25 +40,25 @@ namespace WhackAMole
             this.moleTex = moleTex;
             this.holeTex = holeTex;
             this.grassTex = grassTex;
-            this.widthSpace = widthSpace;
-            this.heightSpace = heightSpace;
+            this.widthSpace = widthSpace; //Till för att sätta avstånd mellan mull, gräs och hål
+            this.heightSpace = heightSpace; //Samma som width fast för höjden istället för bredden
 
 
         }
 
         public void Load()
         {
-            holePos = new Vector2(150 + widthSpace, 300 + heightSpace);
+            holePos = new Vector2(150 + widthSpace, 300 + heightSpace); 
             grassPos = new Vector2(150 + widthSpace, 300 + heightSpace);
             molePos = new Vector2(150 + widthSpace, grassPos.Y);
-            moleVelo = new Vector2(0, 2.5f);
+            moleVelo = new Vector2(0, 2.5f); //Hur snabbt mullvadarna går upp och ned
             moleState = MoleState.IsDown;
             mouseState = new MouseState();
             mousePos = new Point(mouseState.Position.X, mouseState.Position.Y);
 
         }
 
-        public void Update(Random rnd)
+        public void Update(Random rnd) //Random så att varje mullvad inte måste få sin egna random
         {
             oldMouseState = mouseState;
             mouseState = Mouse.GetState();
@@ -119,7 +119,7 @@ namespace WhackAMole
 
 
             int height = ((int)molePos.Y - (int)grassPos.Y);
-            moleHitBox = new Rectangle((int)molePos.X, (int)molePos.Y - height + 35, moleTex.Width, height);
+            moleHitBox = new Rectangle((int)molePos.X, (int)molePos.Y - height + 35, moleTex.Width, height); //Skapar mullvadens hitbox/rektangel. Ger den en dynamisk height. +35 är bara finjustering. 
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -154,7 +154,10 @@ namespace WhackAMole
                 SpriteEffects.None,
                 0f);
 
-            spriteBatch.DrawRectangle(moleHitBox, Color.Red, 2f, 0);
+            spriteBatch.DrawRectangle(moleHitBox, //Tillåter mig att se rektangeln
+                Color.Red, 
+                2f, 
+                0);
         }
     }
 }

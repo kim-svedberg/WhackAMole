@@ -56,7 +56,7 @@ namespace WhackAMole
             mole2DArray = new Mole[3, 3];
 
 
-            for (int i = 0; i < mole2DArray.GetLength(0); i++)
+            for (int i = 0; i < mole2DArray.GetLength(0); i++)       //Sätter in mullvadarna i en array
             {
                 for (int j = 0; j < mole2DArray.GetLength(1); j++)
                 {
@@ -72,10 +72,6 @@ namespace WhackAMole
 
             }
 
-            
-
-
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -84,11 +80,10 @@ namespace WhackAMole
                 Exit();
 
 
-            for (int i = 0; i < mole2DArray.GetLength(0); i++)
+            for (int i = 0; i < mole2DArray.GetLength(0); i++)    //Uppdaterar positioner och hastighet i arrayen utifrån min mullvads-klass
             {
                 for (int j = 0; j < mole2DArray.GetLength(1); j++)
                 {
-                    // rnd.Next()
 
                     mole2DArray[i, j].Update(rnd);
 
@@ -104,7 +99,14 @@ namespace WhackAMole
         {
             
             spriteBatch.Begin(SpriteSortMode.BackToFront,null);
-            spriteBatch.Draw(bgTex, new Vector2(0, 0), null, Color.White, 0, new Vector2(0, 0), 2, SpriteEffects.None, 1f);
+           
+            spriteBatch.Draw(bgTex, 
+                new Vector2(0, 0), 
+                null, Color.White, 
+                0, new Vector2(0, 0), 
+                2, 
+                SpriteEffects.None, 
+                1f);
        
             Color grassGreen = new Color(111, 209, 72, 255);
                    GraphicsDevice.Clear(grassGreen);
@@ -116,7 +118,6 @@ namespace WhackAMole
                         mole2DArray[i, j].Draw(spriteBatch);
                     }
             
-
 
             spriteBatch.End(); 
 
