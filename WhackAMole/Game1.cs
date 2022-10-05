@@ -23,7 +23,6 @@ namespace WhackAMole
         Texture2D moleHitTex;
         Texture2D menuTex;
         Texture2D gameOverTex;
-        Texture2D[] gameStateTex;
 
         SpriteFont timeFont;
         SpriteFont scoreFont;
@@ -66,13 +65,6 @@ namespace WhackAMole
             menuTex = Content.Load<Texture2D>("menuscreen");
             gameOverTex = Content.Load<Texture2D>("gameoverscreen");
 
-            gameStateTex = new Texture2D[2];
-            gameStateTex[(int)GameState.Menu] = menuTex;
-            gameStateTex[(int)GameState.GameOver] = gameOverTex;
-
-
-
-
             mole2DArray = new Mole[3, 3];
 
 
@@ -84,7 +76,7 @@ namespace WhackAMole
                     heightSpace = i * (moleTex.Height + 100);
                     mole = new Mole(moleTex, holeTex, grassTex, moleHitTex, widthSpace, heightSpace);
                     mole.Load();
-                    
+
                     mole2DArray[i, j] = mole;
 
                 }
@@ -113,6 +105,25 @@ namespace WhackAMole
 
                 case GameState.Play:
                     {
+                        //mole2DArray = new Mole[3, 3];
+
+
+                        //for (int i = 0; i < mole2DArray.GetLength(0); i++)       //Sätter in mullvadarna i en array
+                        //{
+                        //    for (int j = 0; j < mole2DArray.GetLength(1); j++)
+                        //    {
+                        //        widthSpace = j * moleTex.Width * 2;
+                        //        heightSpace = i * (moleTex.Height + 100);
+                        //        mole = new Mole(moleTex, holeTex, grassTex, moleHitTex, widthSpace, heightSpace);
+                        //        mole.Load();
+
+                        //        mole2DArray[i, j] = mole;
+
+                        //    }
+
+
+                        //}
+
                         for (int i = 0; i < mole2DArray.GetLength(0); i++)    //Uppdaterar positioner och hastighet i arrayen utifrån min mullvads-klass
                         {
                             for (int j = 0; j < mole2DArray.GetLength(1); j++)
@@ -158,29 +169,42 @@ namespace WhackAMole
             
             spriteBatch.Begin(SpriteSortMode.BackToFront,null);
 
-            spriteBatch.DrawString(timeFont, "TIME: ", new Vector2(50,50), Color.White);
-            spriteBatch.DrawString(scoreFont, "SCORE: ", new Vector2(50, 120), Color.White); 
+
+            if (gameState == GameState.Menu)
+            {
+                spriteBatch.Draw(menuTex, new Vector2(0, 0), Color.White);
+            }
+
+            if (gameState == GameState.Play)
+            {
+                spriteBatch.DrawString(timeFont, "TIME: ", new Vector2(50, 50), Color.White);
+                spriteBatch.DrawString(scoreFont, "SCORE: ", new Vector2(50, 120), Color.White);
 
 
-            spriteBatch.Draw(bgTex, 
-                new Vector2(0, 0), 
-                null, Color.White, 
-                0, new Vector2(0, 0), 
-                2, 
-                SpriteEffects.None, 
-                1f);
-       
-            Color grassGreen = new Color(111, 209, 72, 255);
-                   GraphicsDevice.Clear(grassGreen);
+                spriteBatch.Draw(bgTex,
+                    new Vector2(0, 0),
+                    null, Color.White,
+                    0, new Vector2(0, 0),
+                    2,
+                    SpriteEffects.None,
+                    1f);
+
+                Color grassGreen = new Color(111, 209, 72, 255);
+                GraphicsDevice.Clear(grassGreen);
 
 
-            for (int i = 0; i < mole2DArray.GetLength(0); i++)
+                for (int i = 0; i < mole2DArray.GetLength(0); i++)
                     for (int j = 0; j < mole2DArray.GetLength(1); j++)
                     {
                         mole2DArray[i, j].Draw(spriteBatch);
                     }
+            }
 
-            
+            if(gameState == GameState.GameOver)
+            {
+                spriteBatch.Draw(gameOverTex, new Vector2(0, 0), Color.White);
+            }
+
 
             spriteBatch.End(); 
 
