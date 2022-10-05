@@ -35,7 +35,7 @@ namespace WhackAMole
 
         enum MoleState
         {
-            MovingUp, IsUp, MovingDown, IsDown, IsHit //IsDownHit
+            MovingUp, IsUp, MovingDown, IsDown, IsHit
         }
 
         MoleState moleState;
