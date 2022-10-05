@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using System;
+using System.Windows.Forms;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 
 namespace WhackAMole
 {
@@ -20,6 +23,9 @@ namespace WhackAMole
         int heightSpace;
 
         Rectangle moleHitBox;
+
+        MouseState mouseState, oldMouseState;
+        Point mousePos;
 
         enum MoleState
         {
@@ -47,15 +53,22 @@ namespace WhackAMole
             molePos = new Vector2(150 + widthSpace, grassPos.Y);
             moleVelo = new Vector2(0, 2.5f);
             moleState = MoleState.IsDown;
+            mouseState = new MouseState();
+            mousePos = new Point(mouseState.Position.X, mouseState.Position.Y);
+
         }
 
         public void Update(Random rnd)
         {
+            oldMouseState = mouseState;
+            mouseState = Mouse.GetState();
+
             switch (moleState)
             {
+
                 case MoleState.MovingUp:
                 case MoleState.IsUp:
-                    if(klick)
+                    if (moleHitBox.Contains(mousePos) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
                     {
                         moleState = MoleState.IsHit;
                     }
@@ -97,6 +110,10 @@ namespace WhackAMole
                     break;
 
                 case MoleState.IsHit: //När mole blir klickad ska det direkt bli IsHit. Inuti IsHit byts bilden till bonked & går ner. 
+                    {
+                        //Byt animation
+
+                    }
                     break;
             }
 
