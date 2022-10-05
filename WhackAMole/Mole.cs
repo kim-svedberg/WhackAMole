@@ -27,6 +27,8 @@ namespace WhackAMole
         MouseState mouseState, oldMouseState;
         Point mousePos;
 
+        bool hitMole;
+
         enum MoleState
         {
             MovingUp, IsUp, MovingDown, IsDown, IsHit //IsDownHit
@@ -111,7 +113,14 @@ namespace WhackAMole
 
                 case MoleState.IsHit: //När mole blir klickad ska det direkt bli IsHit. Inuti IsHit byts bilden till bonked & går ner. 
                     {
-                        //Byt animation
+                        molePos.Y += 1;
+                        hitMole = true;
+                        if (molePos.Y > grassPos.Y)
+                        {
+                            moleState = MoleState.MovingDown;
+                        }
+
+                        
 
                     }
                     break;
@@ -158,6 +167,12 @@ namespace WhackAMole
                 Color.Red, 
                 2f, 
                 0);
+
+            if(hitMole == true)
+            {
+                spriteBatch.Draw()
+            }
+
         }
     }
 }
