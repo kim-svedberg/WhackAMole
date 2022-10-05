@@ -78,21 +78,19 @@ namespace WhackAMole
             mousePos = new Point(mouseState.Position.X, mouseState.Position.Y);
 
             int height = ((int)grassPos.Y - (int)molePos.Y);
-            moleHitBox = new Rectangle((int)molePos.X, (int)molePos.Y +35 /*- height*/ , moleTex.Width, height); //Skapar mullvadens hitbox/rektangel. Ger den en dynamisk height. +35 är bara finjustering. 
+            moleHitBox = new Rectangle((int)molePos.X, (int)molePos.Y +35, moleTex.Width, height); //Skapar mullvadens hitbox/rektangel. Ger den en dynamisk height. +35 och är bara finjustering. 
             mouseBox = new Rectangle((int)mouseState.X, (int)mouseState.Y, 1, 1);
 
-            if (mouseBox.Intersects(moleHitBox) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
-            //if (mouseBox.Intersects(moleHitBox))
-            {
-                moleState = MoleState.IsHit;
-            }
+            
             switch (moleState)
             {
 
                 case MoleState.MovingUp:
                 case MoleState.IsUp:
-                    //if (moleHitBox.Contains(mousePos) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
-                    
+                    if (mouseBox.Intersects(moleHitBox) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                    {
+                        moleState = MoleState.IsHit;
+                    }
                     break;
             }
 

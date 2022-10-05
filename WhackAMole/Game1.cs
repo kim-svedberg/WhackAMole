@@ -22,9 +22,10 @@ namespace WhackAMole
         Texture2D bgTex;
         Texture2D moleHitTex;
 
+        SpriteFont timeFont;
+
         int widthSpace;
         int heightSpace;
-
 
         Random rnd = new Random();
 
@@ -53,8 +54,8 @@ namespace WhackAMole
             holeTex = Content.Load<Texture2D>("molehole");
             bgTex = Content.Load<Texture2D>("bgmole");
             moleHitTex = Content.Load<Texture2D>("molehit2");
+            timeFont = Content.Load<SpriteFont>("File");
 
-           
             mole2DArray = new Mole[3, 3];
 
 
@@ -101,7 +102,9 @@ namespace WhackAMole
         {
             
             spriteBatch.Begin(SpriteSortMode.BackToFront,null);
-           
+
+            spriteBatch.DrawString(timeFont, "TIME: ", new Vector2(50,50), Color.White);
+
             spriteBatch.Draw(bgTex, 
                 new Vector2(0, 0), 
                 null, Color.White, 
