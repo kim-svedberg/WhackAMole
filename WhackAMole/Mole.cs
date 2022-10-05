@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using System;
+using System.Reflection.Metadata;
+using System.Threading;
 using System.Windows.Forms;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 
@@ -10,12 +12,12 @@ namespace WhackAMole
 {
     internal class Mole
     {
+
         Texture2D moleTex;
         Texture2D holeTex;
         Texture2D grassTex;
         Texture2D moleHitTex;
-
-        Texture2D[] stateTex;
+        Texture2D[] moleStateTex;
 
         Vector2 molePos;
         Vector2 holePos;
@@ -24,14 +26,13 @@ namespace WhackAMole
 
         int widthSpace;
         int heightSpace;
+        public int userScore; 
 
         Rectangle moleHitBox;
         Rectangle mouseBox;
 
         MouseState mouseState, oldMouseState;
         Point mousePos;
-
-        bool hitMole;
 
         enum MoleState
         {
@@ -49,12 +50,13 @@ namespace WhackAMole
             this.widthSpace = widthSpace; //Till för att sätta avstånd mellan mull, gräs och hål
             this.heightSpace = heightSpace; //Samma som width fast för höjden istället för bredden
             this.moleHitTex = moleHitTex;
-            stateTex = new Texture2D[5];
-            stateTex[(int)MoleState.MovingUp] = moleTex;
-            stateTex[(int)MoleState.IsUp] = moleTex;
-            stateTex[(int)MoleState.MovingDown] = moleTex;
-            stateTex[(int)MoleState.IsDown] = moleTex;
-            stateTex[(int)MoleState.IsHit] = moleHitTex;
+
+            moleStateTex = new Texture2D[5];
+            moleStateTex[(int)MoleState.MovingUp] = moleTex;
+            moleStateTex[(int)MoleState.IsUp] = moleTex;
+            moleStateTex[(int)MoleState.MovingDown] = moleTex;
+            moleStateTex[(int)MoleState.IsDown] = moleTex;
+            moleStateTex[(int)MoleState.IsHit] = moleHitTex;
 
 
         }
@@ -68,6 +70,7 @@ namespace WhackAMole
             moleState = MoleState.IsDown;
             mouseState = new MouseState();
             mousePos = new Point(mouseState.Position.X, mouseState.Position.Y);
+
 
         }
 
@@ -130,7 +133,7 @@ namespace WhackAMole
 
                 case MoleState.IsHit: //När mole blir klickad ska det direkt bli IsHit. Inuti IsHit byts bilden till bonked & går ner. 
                     {
-
+                        userScore++;
                         molePos += moleVelo *2;
                         if (molePos.Y > grassPos.Y)
                         {
@@ -148,7 +151,8 @@ namespace WhackAMole
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(stateTex[(int)moleState],
+
+            spriteBatch.Draw(moleStateTex[(int)moleState],
                 molePos,
                 null,
                 Color.White,

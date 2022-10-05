@@ -21,13 +21,20 @@ namespace WhackAMole
         Texture2D holeTex;
         Texture2D bgTex;
         Texture2D moleHitTex;
+        Texture2D menuTex;
+        Texture2D gameOverTex;
+        Texture2D[] gameStateTex;
 
         SpriteFont timeFont;
+        SpriteFont scoreFont;
 
         int widthSpace;
         int heightSpace;
 
         Random rnd = new Random();
+
+        enum GameState { Menu, Play, GameOver }
+        GameState gameState;
 
         public Game1()
         {
@@ -42,7 +49,7 @@ namespace WhackAMole
 
         protected override void Initialize()
         {
-
+            gameState = GameState.Menu;
             base.Initialize();
         }
 
@@ -55,6 +62,16 @@ namespace WhackAMole
             bgTex = Content.Load<Texture2D>("bgmole");
             moleHitTex = Content.Load<Texture2D>("molehit2");
             timeFont = Content.Load<SpriteFont>("File");
+            scoreFont = Content.Load<SpriteFont>("score");
+            menuTex = Content.Load<Texture2D>("menuscreen");
+            gameOverTex = Content.Load<Texture2D>("gameoverscreen");
+
+            gameStateTex = new Texture2D[2];
+            gameStateTex[(int)GameState.Menu] = menuTex;
+            gameStateTex[(int)GameState.GameOver] = gameOverTex;
+
+
+
 
             mole2DArray = new Mole[3, 3];
 
@@ -82,18 +99,56 @@ namespace WhackAMole
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
-            for (int i = 0; i < mole2DArray.GetLength(0); i++)    //Uppdaterar positioner och hastighet i arrayen utifrån min mullvads-klass
+            switch(gameState)
             {
-                for (int j = 0; j < mole2DArray.GetLength(1); j++)
-                {
+                case GameState.Menu:
+                    {
+                       
+                        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Enter))
+                        {
+                            gameState = GameState.Play;
+                        }
+                    }
+                    break;
 
-                    mole2DArray[i, j].Update(rnd);
+                case GameState.Play:
+                    {
+                        for (int i = 0; i < mole2DArray.GetLength(0); i++)    //Uppdaterar positioner och hastighet i arrayen utifrån min mullvads-klass
+                        {
+                            for (int j = 0; j < mole2DArray.GetLength(1); j++)
+                            {
 
-                }
+                                mole2DArray[i, j].Update(rnd);
 
+                            }
+
+
+                        }
+
+                        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Enter)) //Ska vara: när tiden når noll. 
+                        {
+                            gameState = GameState.GameOver;
+                        }
+
+                    }
+                    break;
+
+                case GameState.GameOver:
+                    {
+                        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Enter))
+                        {
+                            gameState = GameState.Menu;
+                        }
+                        else if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                        {
+                            Exit();
+                        }
+                    }
+                    break;
 
             }
+
+
 
             base.Update(gameTime);
         }
@@ -104,6 +159,8 @@ namespace WhackAMole
             spriteBatch.Begin(SpriteSortMode.BackToFront,null);
 
             spriteBatch.DrawString(timeFont, "TIME: ", new Vector2(50,50), Color.White);
+            spriteBatch.DrawString(scoreFont, "SCORE: ", new Vector2(50, 120), Color.White); 
+
 
             spriteBatch.Draw(bgTex, 
                 new Vector2(0, 0), 
@@ -122,6 +179,7 @@ namespace WhackAMole
                     {
                         mole2DArray[i, j].Draw(spriteBatch);
                     }
+
             
 
             spriteBatch.End(); 
@@ -130,3 +188,9 @@ namespace WhackAMole
         }
     }
 }
+
+//TODO: 
+// 1. score
+// 2. tid
+// 3. game-states
+// 4. animering
