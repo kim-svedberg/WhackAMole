@@ -20,6 +20,7 @@ namespace WhackAMole
         Texture2D grassTex;
         Texture2D holeTex;
         Texture2D bgTex;
+        Texture2D moleHitTex;
 
         int widthSpace;
         int heightSpace;
@@ -50,7 +51,8 @@ namespace WhackAMole
             moleTex = Content.Load<Texture2D>("mole");
             grassTex = Content.Load<Texture2D>("grass");
             holeTex = Content.Load<Texture2D>("molehole");
-            bgTex = Content.Load<Texture2D>("bgmole"); 
+            bgTex = Content.Load<Texture2D>("bgmole");
+            moleHitTex = Content.Load<Texture2D>("molehit2");
 
            
             mole2DArray = new Mole[3, 3];
@@ -62,7 +64,7 @@ namespace WhackAMole
                 {
                     widthSpace = j * moleTex.Width * 2;
                     heightSpace = i * (moleTex.Height + 100);
-                    mole = new Mole(moleTex, holeTex, grassTex, widthSpace, heightSpace);
+                    mole = new Mole(moleTex, holeTex, grassTex, moleHitTex, widthSpace, heightSpace);
                     mole.Load();
                     
                     mole2DArray[i, j] = mole;

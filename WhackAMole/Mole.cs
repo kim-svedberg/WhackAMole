@@ -13,6 +13,9 @@ namespace WhackAMole
         Texture2D moleTex;
         Texture2D holeTex;
         Texture2D grassTex;
+        Texture2D moleHitTex;
+
+        Texture2D[] stateTex;
 
         Vector2 molePos;
         Vector2 holePos;
@@ -23,6 +26,7 @@ namespace WhackAMole
         int heightSpace;
 
         Rectangle moleHitBox;
+        Rectangle mouseBox;
 
         MouseState mouseState, oldMouseState;
         Point mousePos;
@@ -37,13 +41,20 @@ namespace WhackAMole
         MoleState moleState;
 
 
-        public Mole(Texture2D moleTex, Texture2D holeTex, Texture2D grassTex, int widthSpace, int heightSpace)
+        public Mole(Texture2D moleTex, Texture2D holeTex, Texture2D grassTex, Texture2D moleHitTex, int widthSpace, int heightSpace)
         {
             this.moleTex = moleTex;
             this.holeTex = holeTex;
             this.grassTex = grassTex;
             this.widthSpace = widthSpace; //Till för att sätta avstånd mellan mull, gräs och hål
             this.heightSpace = heightSpace; //Samma som width fast för höjden istället för bredden
+            this.moleHitTex = moleHitTex;
+            stateTex = new Texture2D[5];
+            stateTex[(int)MoleState.MovingUp] = moleTex;
+            stateTex[(int)MoleState.IsUp] = moleTex;
+            stateTex[(int)MoleState.MovingDown] = moleTex;
+            stateTex[(int)MoleState.IsDown] = moleTex;
+            stateTex[(int)MoleState.IsHit] = moleHitTex;
 
 
         }
@@ -64,16 +75,24 @@ namespace WhackAMole
         {
             oldMouseState = mouseState;
             mouseState = Mouse.GetState();
+            mousePos = new Point(mouseState.Position.X, mouseState.Position.Y);
 
+            int height = ((int)grassPos.Y - (int)molePos.Y);
+            moleHitBox = new Rectangle((int)molePos.X, (int)molePos.Y +35 /*- height*/ , moleTex.Width, height); //Skapar mullvadens hitbox/rektangel. Ger den en dynamisk height. +35 är bara finjustering. 
+            mouseBox = new Rectangle((int)mouseState.X, (int)mouseState.Y, 1, 1);
+
+            if (mouseBox.Intersects(moleHitBox) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+            //if (mouseBox.Intersects(moleHitBox))
+            {
+                moleState = MoleState.IsHit;
+            }
             switch (moleState)
             {
 
                 case MoleState.MovingUp:
                 case MoleState.IsUp:
-                    if (moleHitBox.Contains(mousePos) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
-                    {
-                        moleState = MoleState.IsHit;
-                    }
+                    //if (moleHitBox.Contains(mousePos) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                    
                     break;
             }
 
@@ -113,27 +132,25 @@ namespace WhackAMole
 
                 case MoleState.IsHit: //När mole blir klickad ska det direkt bli IsHit. Inuti IsHit byts bilden till bonked & går ner. 
                     {
-                        molePos.Y += 1;
-                        hitMole = true;
+
+                        molePos += moleVelo *2;
                         if (molePos.Y > grassPos.Y)
                         {
                             moleState = MoleState.MovingDown;
+                            molePos.Y = grassPos.Y;
                         }
-
-                        
 
                     }
                     break;
             }
 
 
-            int height = ((int)molePos.Y - (int)grassPos.Y);
-            moleHitBox = new Rectangle((int)molePos.X, (int)molePos.Y - height + 35, moleTex.Width, height); //Skapar mullvadens hitbox/rektangel. Ger den en dynamisk height. +35 är bara finjustering. 
+           
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(moleTex,
+            spriteBatch.Draw(stateTex[(int)moleState],
                 molePos,
                 null,
                 Color.White,
@@ -167,11 +184,6 @@ namespace WhackAMole
                 Color.Red, 
                 2f, 
                 0);
-
-            if(hitMole == true)
-            {
-                spriteBatch.Draw()
-            }
 
         }
     }
