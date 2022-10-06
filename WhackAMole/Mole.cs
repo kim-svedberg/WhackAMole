@@ -26,7 +26,7 @@ namespace WhackAMole
 
         int widthSpace;
         int heightSpace;
-        public int userScore; 
+        public static int userScore; 
 
         Rectangle moleHitBox;
         Rectangle mouseBox;
@@ -182,10 +182,10 @@ namespace WhackAMole
                 SpriteEffects.None,
                 0f);
 
-            spriteBatch.DrawRectangle(moleHitBox, //Tillåter mig att se rektangeln
-                Color.Red, 
-                2f, 
-                0);
+            //spriteBatch.DrawRectangle(moleHitBox, //Tillåter mig att se rektangeln
+            //    Color.Red, 
+            //    2f, 
+            //    0);
 
         }
     }
