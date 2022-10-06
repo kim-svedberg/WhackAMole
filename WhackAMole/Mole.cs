@@ -183,8 +183,8 @@ namespace WhackAMole
                 0f);
 
             //spriteBatch.DrawRectangle(moleHitBox, //Tillåter mig att se rektangeln
-            //    Color.Red, 
-            //    2f, 
+            //    Color.Red,
+            //    2f,
             //    0);
 
         }

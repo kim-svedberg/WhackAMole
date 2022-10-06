@@ -25,6 +25,7 @@ namespace WhackAMole
         Texture2D gameOverTex;
         Texture2D[] gameStateTex;
         Texture2D stoneSheet;
+        Texture2D malletTex;
 
         SpriteFont timeFont;
         SpriteFont scoreFont;
@@ -34,15 +35,16 @@ namespace WhackAMole
         int widthSpace;
         int heightSpace;
         int gameTimer = 60;
-        int visualTime = 60;
+        int visualTime = 10;
         double timeSinceLastFrame = 0; 
         double timeBetweenFrames = 0.1;
 
         Point sheetSize;
         Point frameSize;
         Point currentFrame;
-        
 
+        MouseState mouseState;
+        Vector2 mousePos;
 
         Random rnd = new Random();
 
@@ -53,7 +55,7 @@ namespace WhackAMole
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
 
             graphics.PreferredBackBufferWidth = 1250;   //Ändrar storlek på fönstret
             graphics.PreferredBackBufferHeight = 1250;
@@ -85,6 +87,7 @@ namespace WhackAMole
             menuTex = Content.Load<Texture2D>("blue");
             gameOverTex = Content.Load<Texture2D>("orange");
             stoneSheet = Content.Load<Texture2D>(@"spritesheet_stone");
+            malletTex = Content.Load<Texture2D>("mallet");
 
             timeFont = Content.Load<SpriteFont>("File");
             scoreFont = Content.Load<SpriteFont>("score");
@@ -129,7 +132,11 @@ namespace WhackAMole
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            switch(gameState)
+            mouseState = Mouse.GetState();
+            mousePos = new Vector2(mouseState.X + malletTex.Width -40, mouseState.Y + 40);
+
+
+            switch (gameState)
             {
                 case GameState.Menu:
                     {
@@ -139,6 +146,7 @@ namespace WhackAMole
                             timeSinceLastFrame -= timeBetweenFrames;
                             currentFrame.X++;
                             if (currentFrame.X >= sheetSize.X)
+
                             {
                                 currentFrame.X = 0;
                                 currentFrame.Y++;
@@ -181,9 +189,11 @@ namespace WhackAMole
 
                         }
 
-                        if (Keyboard.GetState().IsKeyDown(Keys.Z)) //Ska vara: när tiden når noll. 
+                        if (visualTime <= 0) //Ska vara: när tiden når noll. 
                         {
                             gameState = GameState.GameOver;
+                            
+
                         }
 
                     }
@@ -194,6 +204,8 @@ namespace WhackAMole
                         if (Keyboard.GetState().IsKeyDown(Keys.X))
                         {
                             gameState = GameState.Play;
+                            visualTime = 10;
+                            Mole.userScore = 0;
                         }
                         
                     }
@@ -235,19 +247,29 @@ namespace WhackAMole
                         mole2DArray[i, j].Draw(spriteBatch);
                     }
 
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    spriteBatch.Draw(malletTex, mousePos, new Rectangle(0, 0, malletTex.Width, malletTex.Height), Color.White, rotation: 0f, new Vector2(malletTex.Width, malletTex.Height), 1, SpriteEffects.None, 0f);
+
+                }
+                else
+                {
+                    spriteBatch.Draw(malletTex, mousePos, new Rectangle(0, 0, malletTex.Width, malletTex.Height), Color.White, 0.3f, new Vector2(malletTex.Width, malletTex.Height), 1, SpriteEffects.None, 0f);
+                }
+
             }
 
-            if(gameState == GameState.Menu)
+            if (gameState == GameState.Menu)
             {
                 Rectangle source = new Rectangle(currentFrame.X * frameSize.X, currentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y);
-                spriteBatch.Draw(stoneSheet, new Vector2(Window.ClientBounds.Width / 2 - 300, Window.ClientBounds.Height / 2 + 55), source, Color.White);
+                spriteBatch.Draw(stoneSheet, new Vector2(Window.ClientBounds.Width / 2 - 300, Window.ClientBounds.Height / 2 - 70), source, Color.White);
 
-                spriteBatch.DrawString(menuFont, "Press ENTER to play!", new Vector2(Window.ClientBounds.Width / 2 - 175, Window.ClientBounds.Height / 2 + 55), Color.White);
+                spriteBatch.DrawString(menuFont, "Press ENTER to play!", new Vector2(Window.ClientBounds.Width / 2 - 175, Window.ClientBounds.Height / 2 - 70), Color.White);
             }
 
             if (gameState == GameState.GameOver)
             {
-                spriteBatch.DrawString(gameOverFont, "GAME OVER! X to play again. ESC to quit.", new Vector2(Window.ClientBounds.Width / 2 - 375, Window.ClientBounds.Height / 2 + 55), Color.White);
+                spriteBatch.DrawString(gameOverFont, "GAME OVER! X to play again. ESC to quit. \n Score: " + Mole.userScore, new Vector2(Window.ClientBounds.Width / 2 - 375, Window.ClientBounds.Height / 2 - 70), Color.White);
             }
 
             spriteBatch.End(); 
@@ -256,8 +278,3 @@ namespace WhackAMole
         }
     }
 }
-
-//TODO: 
-// 1. score
-// 2. tid
-// 3. animering
