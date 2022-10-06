@@ -26,7 +26,8 @@ namespace WhackAMole
 
         int widthSpace;
         int heightSpace;
-        public static int userScore; 
+        public static int userScore;
+        public static int userLives = 5;
 
         Rectangle moleHitBox;
         Rectangle mouseBox;
@@ -34,9 +35,11 @@ namespace WhackAMole
         MouseState mouseState, oldMouseState;
         Point mousePos;
 
+        bool mouseRelease = true;
+
         enum MoleState
         {
-            MovingUp, IsUp, MovingDown, IsDown, IsHit
+            MovingUp, IsUp, MovingDown, IsDown, IsHit, Whacked
         }
 
         MoleState moleState;
@@ -51,12 +54,14 @@ namespace WhackAMole
             this.heightSpace = heightSpace; //Samma som width fast för höjden istället för bredden
             this.moleHitTex = moleHitTex;
 
-            moleStateTex = new Texture2D[5];
+            moleStateTex = new Texture2D[6];
             moleStateTex[(int)MoleState.MovingUp] = moleTex;
             moleStateTex[(int)MoleState.IsUp] = moleTex;
             moleStateTex[(int)MoleState.MovingDown] = moleTex;
             moleStateTex[(int)MoleState.IsDown] = moleTex;
             moleStateTex[(int)MoleState.IsHit] = moleHitTex;
+            moleStateTex[(int)MoleState.Whacked] = moleHitTex;
+
 
 
         }
@@ -90,9 +95,14 @@ namespace WhackAMole
 
                 case MoleState.MovingUp:
                 case MoleState.IsUp:
-                    if (mouseBox.Intersects(moleHitBox) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                    if (mouseBox.Intersects(moleHitBox) && mouseState.LeftButton == ButtonState.Pressed && mouseRelease && oldMouseState.LeftButton == ButtonState.Released)
                     {
                         moleState = MoleState.IsHit;
+                        mouseRelease = false;
+                    }
+                    else if (mouseState.LeftButton == ButtonState.Released && !mouseRelease)
+                    {
+                        mouseRelease = true; 
                     }
                     break;
             }
@@ -109,7 +119,7 @@ namespace WhackAMole
                     break;
 
                 case MoleState.IsUp:
-                    if (rnd.Next(1, 100) == 1)
+                    if (rnd.Next(1, 500) == 1)
                     {
                         moleState = MoleState.MovingDown;
                     }
@@ -121,11 +131,23 @@ namespace WhackAMole
                     {
                         moleState = MoleState.IsDown;
                         molePos.Y = grassPos.Y;
+                        userLives--;
+
+                    }
+                    break;
+
+                case MoleState.Whacked:
+                    molePos += moleVelo;
+                    if (molePos.Y > grassPos.Y)
+                    {
+                        moleState = MoleState.IsDown;
+                        molePos.Y = grassPos.Y;
+
                     }
                     break;
 
                 case MoleState.IsDown:
-                    if (rnd.Next(1, 100) == 1)
+                    if (rnd.Next(1, 300) == 1)
                     {
                         moleState = MoleState.MovingUp;
                     }
@@ -133,11 +155,12 @@ namespace WhackAMole
 
                 case MoleState.IsHit: //När mole blir klickad ska det direkt bli IsHit. Inuti IsHit byts bilden till bonked & går ner. 
                     {
+                        
                         userScore++;
                         molePos += moleVelo *2;
                         if (molePos.Y > grassPos.Y)
                         {
-                            moleState = MoleState.MovingDown;
+                            moleState = MoleState.Whacked;
                             molePos.Y = grassPos.Y;
                         }
 

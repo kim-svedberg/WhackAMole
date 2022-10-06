@@ -35,7 +35,7 @@ namespace WhackAMole
         int widthSpace;
         int heightSpace;
         int gameTimer = 60;
-        int visualTime = 10;
+        int visualTime = 30;
         double timeSinceLastFrame = 0; 
         double timeBetweenFrames = 0.1;
 
@@ -189,12 +189,14 @@ namespace WhackAMole
 
                         }
 
-                        if (visualTime <= 0) //Ska vara: när tiden når noll. 
+                        if (visualTime <= 0 || Mole.userLives <= 0) //Ska vara: när tiden når noll. 
                         {
                             gameState = GameState.GameOver;
                             
 
                         }
+
+                       
 
                     }
                     break;
@@ -204,8 +206,9 @@ namespace WhackAMole
                         if (Keyboard.GetState().IsKeyDown(Keys.X))
                         {
                             gameState = GameState.Play;
-                            visualTime = 10;
+                            visualTime = 30;
                             Mole.userScore = 0;
+                            Mole.userLives = 5;
                         }
                         
                     }
@@ -240,6 +243,7 @@ namespace WhackAMole
 
                 spriteBatch.DrawString(timeFont, "TIME: " +visualTime, new Vector2(50, 50), Color.White);
                 spriteBatch.DrawString(scoreFont, "SCORE: " + Mole.userScore, new Vector2(50, 120), Color.White);
+                spriteBatch.DrawString(scoreFont, "LIVES: " + Mole.userLives, new Vector2(500, 50), Color.White);
 
                 for (int i = 0; i < mole2DArray.GetLength(0); i++)
                     for (int j = 0; j < mole2DArray.GetLength(1); j++)
