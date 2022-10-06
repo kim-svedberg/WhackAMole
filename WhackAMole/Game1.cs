@@ -36,7 +36,7 @@ namespace WhackAMole
         int heightSpace;
         int gameTimer = 60;
         int visualTime = 30;
-        double timeSinceLastFrame = 0; 
+        double timeSinceLastFrame = 0;
         double timeBetweenFrames = 0.1;
 
         Point sheetSize;
@@ -72,7 +72,6 @@ namespace WhackAMole
             graphics.ApplyChanges();
 
             gameState = GameState.Menu;
-            //gameState = GameState.GameOver;
             base.Initialize();
         }
 
@@ -104,8 +103,38 @@ namespace WhackAMole
             currentFrame = new Point(0, 0);
 
 
+            CreateArray();
 
+        }
 
+        protected override void Update(GameTime gameTime)
+        {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
+
+            MousePosition();
+
+            GameStates(gameTime);
+
+            base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+
+            spriteBatch.Begin(SpriteSortMode.BackToFront, null);
+
+            DrawBGForStates(spriteBatch);
+            DrawStateSprites(spriteBatch);
+
+            spriteBatch.End();
+
+            base.Draw(gameTime);
+     
+        }
+       
+        public void CreateArray()
+        {
             mole2DArray = new Mole[3, 3];
 
 
@@ -124,124 +153,25 @@ namespace WhackAMole
 
 
             }
-
         }
-
-        protected override void Update(GameTime gameTime)
+        public void DrawBGForStates(SpriteBatch spriteBatch)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            mouseState = Mouse.GetState();
-            mousePos = new Vector2(mouseState.X + malletTex.Width -40, mouseState.Y + 40);
-
-
-            switch (gameState)
-            {
-                case GameState.Menu:
-                    {
-                        timeSinceLastFrame += gameTime.ElapsedGameTime.TotalSeconds;
-                        if (timeSinceLastFrame >= timeBetweenFrames)
-                        {
-                            timeSinceLastFrame -= timeBetweenFrames;
-                            currentFrame.X++;
-                            if (currentFrame.X >= sheetSize.X)
-
-                            {
-                                currentFrame.X = 0;
-                                currentFrame.Y++;
-
-                                if(currentFrame.Y >= sheetSize.Y)
-                                {
-                                    currentFrame.Y = 0;
-                                }
-                            }
-                               
-                        }
-
-                        if (Keyboard.GetState().IsKeyDown(Keys.Enter))
-
-                        {
-                            gameState = GameState.Play;
-                        }
-                        
-                    }
-                    break;
-
-                case GameState.Play:
-                    {
-                        gameTimer--;
-                        if(gameTimer <= 0)
-                        {
-                            visualTime--;
-                            gameTimer = 60;
-                        }
-
-                        for (int i = 0; i < mole2DArray.GetLength(0); i++)    //Uppdaterar positioner och hastighet i arrayen utifrån min mullvads-klass
-                        {
-                            for (int j = 0; j < mole2DArray.GetLength(1); j++)
-                            {
-
-                                mole2DArray[i, j].Update(rnd);
-
-                            }
-
-
-                        }
-
-                        if (visualTime <= 0 || Mole.userLives <= 0) //Ska vara: när tiden når noll. 
-                        {
-                            gameState = GameState.GameOver;
-                            
-
-                        }
-
-                       
-
-                    }
-                    break;
-
-                case GameState.GameOver:
-                    {
-                        if (Keyboard.GetState().IsKeyDown(Keys.X))
-                        {
-                            gameState = GameState.Play;
-                            visualTime = 30;
-                            Mole.userScore = 0;
-                            Mole.userLives = 5;
-                        }
-                        
-                    }
-                    break;
-
-            }
-
-
-
-            base.Update(gameTime);
-        }
-
-        protected override void Draw(GameTime gameTime)
-        {
-            
-            spriteBatch.Begin(SpriteSortMode.BackToFront,null);
-           
-
-
             spriteBatch.Draw(gameStateTex[(int)gameState],
-                    new Vector2(0, 0),
-                    null, Color.White,
-                    0, new Vector2(0, 0),
-                    2,
-                    SpriteEffects.None,
-                    1f);
-
+                 new Vector2(0, 0),
+                 null, Color.White,
+                 0, new Vector2(0, 0),
+                 2,
+                 SpriteEffects.None,
+                 1f);
+        }
+        public void DrawStateSprites(SpriteBatch spriteBatch)
+        {
             if (gameState == GameState.Play)
             {
                 Color grassGreen = new Color(111, 209, 72, 255);
                 GraphicsDevice.Clear(grassGreen);
 
-                spriteBatch.DrawString(timeFont, "TIME: " +visualTime, new Vector2(50, 50), Color.White);
+                spriteBatch.DrawString(timeFont, "TIME: " + visualTime, new Vector2(50, 50), Color.White);
                 spriteBatch.DrawString(scoreFont, "SCORE: " + Mole.userScore, new Vector2(50, 120), Color.White);
                 spriteBatch.DrawString(scoreFont, "LIVES: " + Mole.userLives, new Vector2(500, 50), Color.White);
 
@@ -276,9 +206,103 @@ namespace WhackAMole
                 spriteBatch.DrawString(gameOverFont, "GAME OVER! X to play again. ESC to quit. \n Score: " + Mole.userScore, new Vector2(Window.ClientBounds.Width / 2 - 375, Window.ClientBounds.Height / 2 - 70), Color.White);
             }
 
-            spriteBatch.End(); 
-
-            base.Draw(gameTime);
         }
+
+        public void MousePosition()
+        {
+            mouseState = Mouse.GetState();
+            mousePos = new Vector2(mouseState.X + malletTex.Width - 40, mouseState.Y + 40);
+        }
+
+        public void GameStates(GameTime gameTime)
+        {
+            switch (gameState)
+            {
+                case GameState.Menu:
+                    {
+                        timeSinceLastFrame += gameTime.ElapsedGameTime.TotalSeconds;
+                        if (timeSinceLastFrame >= timeBetweenFrames)
+                        {
+                            timeSinceLastFrame -= timeBetweenFrames;
+                            currentFrame.X++;
+                            if (currentFrame.X >= sheetSize.X)
+
+                            {
+                                currentFrame.X = 0;
+                                currentFrame.Y++;
+
+                                if (currentFrame.Y >= sheetSize.Y)
+                                {
+                                    currentFrame.Y = 0;
+                                }
+                            }
+
+                        }
+
+                        if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+
+                        {
+                            gameState = GameState.Play;
+                        }
+
+                    }
+                    break;
+
+                case GameState.Play:
+                    {
+                        gameTimer--;
+                        if (gameTimer <= 0)
+                        {
+                            visualTime--;
+                            gameTimer = 60;
+                            Mole.spawnTimer -= 10;
+                        }
+
+
+
+                        for (int i = 0; i < mole2DArray.GetLength(0); i++)    //Uppdaterar positioner och hastighet i arrayen utifrån min mullvads-klass
+                        {
+                            for (int j = 0; j < mole2DArray.GetLength(1); j++)
+                            {
+
+                                mole2DArray[i, j].Update(rnd);
+
+                            }
+
+
+                        }
+
+                        if (visualTime <= 0 || Mole.userLives <= 0) //Ska vara: när tiden når noll. 
+                        {
+                            gameState = GameState.GameOver;
+
+
+                        }
+
+
+
+                    }
+                    break;
+
+                case GameState.GameOver:
+                    {
+                        if (Keyboard.GetState().IsKeyDown(Keys.X))
+                        {
+                            gameState = GameState.Play;
+                            visualTime = 30;
+                            Mole.userScore = 0;
+                            Mole.userLives = 5;
+                        }
+
+                    }
+                    break;
+
+            }
+        }
+        
+         
+        
     }
+
+
 }

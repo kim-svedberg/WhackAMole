@@ -26,6 +26,7 @@ namespace WhackAMole
 
         int widthSpace;
         int heightSpace;
+        public static int spawnTimer = 300;
         public static int userScore;
         public static int userLives = 5;
 
@@ -119,7 +120,7 @@ namespace WhackAMole
                     break;
 
                 case MoleState.IsUp:
-                    if (rnd.Next(1, 500) == 1)
+                    if (rnd.Next(1, spawnTimer) == 1)
                     {
                         moleState = MoleState.MovingDown;
                     }
@@ -147,7 +148,7 @@ namespace WhackAMole
                     break;
 
                 case MoleState.IsDown:
-                    if (rnd.Next(1, 300) == 1)
+                    if (rnd.Next(1, spawnTimer) == 1)
                     {
                         moleState = MoleState.MovingUp;
                     }
