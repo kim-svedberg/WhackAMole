@@ -36,8 +36,6 @@ namespace WhackAMole
         MouseState mouseState, oldMouseState;
         Point mousePos;
 
-        bool mouseRelease = true;
-
         enum MoleState
         {
             MovingUp, IsUp, MovingDown, IsDown, IsHit, Whacked
@@ -73,7 +71,7 @@ namespace WhackAMole
             grassPos = new Vector2(150 + widthSpace, 300 + heightSpace);
             molePos = new Vector2(150 + widthSpace, grassPos.Y);
             moleVelo = new Vector2(0, 2.5f); //Hur snabbt mullvadarna går upp och ned
-            moleState = MoleState.IsDown;
+            moleState = MoleState.IsDown; //Mullvaden ska börja nere i hålet
             mouseState = new MouseState();
             mousePos = new Point(mouseState.Position.X, mouseState.Position.Y);
 
@@ -93,25 +91,21 @@ namespace WhackAMole
             
             switch (moleState)
             {
-
+                //Man kan slå mullvaden både när den är påväg upp & är uppe. 
                 case MoleState.MovingUp:
                 case MoleState.IsUp:
-                    if (mouseBox.Intersects(moleHitBox) && mouseState.LeftButton == ButtonState.Pressed && mouseRelease && oldMouseState.LeftButton == ButtonState.Released)
+                    if (mouseBox.Intersects(moleHitBox) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
                     {
-                        moleState = MoleState.IsHit;
-                        mouseRelease = false;
+                        moleState = MoleState.IsHit; //Om man träffas mullvaden, gå till Hit. 
                     }
-                    else if (mouseState.LeftButton == ButtonState.Released && !mouseRelease)
-                    {
-                        mouseRelease = true; 
-                    }
+                 
                     break;
             }
 
             switch (moleState)
             {
                 case MoleState.MovingUp:
-                    molePos -= moleVelo;
+                    molePos -= moleVelo; //(-) Gör så att de går uppåt istället för nedåt
                     if (molePos.Y < grassPos.Y - 175)
                     {
                         moleState = MoleState.IsUp;
@@ -120,7 +114,7 @@ namespace WhackAMole
                     break;
 
                 case MoleState.IsUp:
-                    if (rnd.Next(1, spawnTimer) == 1)
+                    if (rnd.Next(1, spawnTimer) == 1) //Om siffran är = 1 (mellan 1 och 300), går ner i hålet. 
                     {
                         moleState = MoleState.MovingDown;
                     }
@@ -138,6 +132,7 @@ namespace WhackAMole
                     break;
 
                 case MoleState.Whacked:
+                    userScore++;
                     molePos += moleVelo;
                     if (molePos.Y > grassPos.Y)
                     {
@@ -148,21 +143,20 @@ namespace WhackAMole
                     break;
 
                 case MoleState.IsDown:
-                    if (rnd.Next(1, spawnTimer) == 1)
+                    if (rnd.Next(1, spawnTimer) == 1) //Om siffran = 1 (mellan 1och 300), går upp ur hålet. 
                     {
                         moleState = MoleState.MovingUp;
                     }
                     break;
 
-                case MoleState.IsHit: //När mole blir klickad ska det direkt bli IsHit. Inuti IsHit byts bilden till bonked & går ner. 
+                case MoleState.IsHit: 
                     {
                         
-                        userScore++;
-                        molePos += moleVelo *2;
+                        molePos += moleVelo *2; //Mullvadarna går ned lite snabbare än vad de kommer upp 
                         if (molePos.Y > grassPos.Y)
                         {
                             moleState = MoleState.Whacked;
-                            molePos.Y = grassPos.Y;
+                            molePos.Y = grassPos.Y; //Annars åker mullvaden för långt ned och syns under gräset 
                         }
 
                     }
